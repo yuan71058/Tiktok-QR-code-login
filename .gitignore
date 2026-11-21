@@ -1,0 +1,13 @@
+*.exe
+bin/
+qr*.png
+*.log
+_trash-*/
+login-result.json
+state-final.json
+profile-self-full.json
+session-cookies.json
+profile-self.json
+data/
+_private/
+enrich.py
