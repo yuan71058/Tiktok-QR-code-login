@@ -106,12 +106,16 @@ go run . -out qr.png -abogus "node abogus-node.mjs" -timeout 180s -interval 2s
 提交前自检（期望 **0 命中**，命中即说明有凭据被 staged）：
 
 ```bash
-git grep -nE "sessionid\=|sid_guard\=|sid_tt\=|uid_tt\=|msToken\=|passport_csrf_token\=|x_tt_token\=|e5c[2]" --cached
+git grep --cached -nE "sessionid=|sid_guard=|sid_tt=|uid_tt=|msToken=|passport_csrf_token=|x_tt_token="
 ```
+
+判读：`exit 1` = 无命中（期望结果），`exit 0` = 有命中必须处理。
 
 工程侧也做了约束：所有凭据打印一律截断成「前 4 字符 + 长度」（`sign.go:trunc`），
 `testdata/golden_check_qrconnect.json` 里的 `fp` / `msToken` / `check token` 已替换成
-`REDACTED_*` 占位符，只保留签名字段真值用于回归测试。
+`REDACTED_*` 占位符。`qs` / `p_no` / `aid_sign` 保留真机真值；`sign` 因输入含已脱敏字段
+（`msToken` / `fp` / `token` / `a_bogus`），改为对脱敏输入的派生值，仅用于防回归，
+**不可作为 `sign` 算法的对照真值**。
 
 ## 协议说明
 
